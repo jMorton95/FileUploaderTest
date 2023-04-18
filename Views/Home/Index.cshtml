@@ -1,0 +1,133 @@
+﻿@model FileUploadTest.Models.OrderFormModel
+@using FileUploadTest.Models;
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@section scripts{
+    <script>
+        const frontEndData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.FrontEndDataModel));
+   
+        const service = document.getElementById("ServiceOptions");
+        const serviceButtons = document.querySelectorAll(".service-button");
+        const orientation = document.getElementById("OrientationOptions");
+        const orientationButtons = document.querySelectorAll(".orientation-button");
+        const template = document.getElementById("TemplateOptions");
+        const templateButtons = document.querySelectorAll(".template-button");
+        const printOnReverse = document.getElementById("PrintOnReverseOptions");
+        const printOnReverseButtons = document.querySelectorAll(".print-on-reverse-button");
+        const magStripeEncoding = document.getElementById("MagStripeEncodingOptions");
+        const magStripeEncodingButtons = document.querySelectorAll(".mag-stripe-encoding-button");
+
+        let selectedService;
+
+        function setService(event) {
+            serviceButtons.forEach(button => button.classList.remove('active'));
+            service.value = event.currentTarget.id;
+            event.currentTarget.classList.add('active');
+            selectedService = event.currentTarget.id;
+        }
+
+        function setOrientation(event) {
+            orientationButtons.forEach(button => button.classList.remove('active'));
+            orientation.value = event.currentTarget.id;
+            event.currentTarget.classList.add('active');
+        }
+
+        function setTemplate(event) {
+            templateButtons.forEach(button => button.classList.remove('active'));
+            template.value = event.currentTarget.id;
+            event.currentTarget.classList.add('active');
+        }
+
+        function setPrintOnReverse(event) {
+            printOnReverseButtons.forEach(button => button.classList.remove('active'));
+            printOnReverse.value = event.currentTarget.id;
+            event.currentTarget.classList.add('active');
+        }
+
+        function setMagStripeEncoding(event) {
+            magStripeEncodingButtons.forEach(button => button.classList.remove('active'));
+            magStripeEncoding.value = event.currentTarget.id;
+            event.currentTarget.classList.add('active');
+        }
+
+        orientationButtons.forEach(button => button.addEventListener('click', setOrientation))
+        serviceButtons.forEach(button => button.addEventListener('click', setService));
+        magStripeEncodingButtons.forEach(button => button.addEventListener('click', setMagStripeEncoding));
+        printOnReverseButtons.forEach(button => button.addEventListener('click', setPrintOnReverse));
+        templateButtons.forEach(button => button.addEventListener('click', setTemplate));
+
+    </script>
+ } 
+
+<style>
+    form button:hover{
+        border: 1px solid blue;
+    }
+    .active {
+        border: 1px solid green;
+    }
+</style>
+
+@if(Model.Image != null)
+{
+    <img src="data:image/jpeg;base64, @Model.Image" alt="First Image" />
+}
+
+<main>
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        @Html.LabelFor(m => m.Quantity)
+        @Html.TextBoxFor(m => m.Quantity)
+
+        <div class="service-options">
+            @Html.LabelFor(m => m.ServiceOptions)
+            @Html.HiddenFor(m => m.ServiceOptions, new { id = "ServiceOptions" })
+            <button type="button" id="Bespoke" class="service-button">Bespoke</button>
+            <button type="button" id="Professional" class="service-button">Professional</button>
+        </div>
+
+        <div class="orientation-options">
+            @Html.LabelFor(m => m.OrientationOptions)
+            @Html.HiddenFor(m => m.OrientationOptions, new { id = "OrientationOptions" })
+            <button type="button" id="Landscape" class="orientation-button">Portrait</button>
+            <button type="button" id="Portrait" class="orientation-button">Landscape</button>
+        </div>
+
+        <div class="template-options">
+            @Html.LabelFor(m => m.TemplateOptions)
+            @Html.HiddenFor(m => m.TemplateOptions, new { id = "TemplateOptions" })
+            <button type="button" id="Plain" class="template-button">Plain</button>
+            <button type="button" id="Stripe" class="template-button">Stripe</button>
+            <button type="button" id="Watermark" class="template-button">Watermark</button>
+        </div>
+
+        <div class="print-on-reverse-options">
+            @Html.LabelFor(m => m.PrintOnReverseOptions)
+            @Html.HiddenFor(m => m.PrintOnReverseOptions, new { id = "PrintOnReverseOptions" })
+            <button type="button" id="FullColour" class="print-on-reverse-button">Full Colour</button>
+            <button type="button" id="BlackColour" class="print-on-reverse-button">Black Colour</button>
+        </div>
+
+        <div class="mag-stripe-encoding-options">
+            @Html.LabelFor(m => m.MagStripeEncodingOptions)
+            @Html.HiddenFor(m => m.MagStripeEncodingOptions, new { id = "MagStripeEncodingOptions" })
+            <button type="button" id="MagStripe" class="mag-stripe-encoding-button">Mag Stripe</button>
+            <button type="button" id="MagStripeEncoding" class="mag-stripe-encoding-button">Mag Stripe Encoding</button>
+        </div>
+
+        <div class="file-upload">
+            @Html.LabelFor(m => m.LogoFile)
+            @Html.TextBoxFor(m => m.LogoFile, new { type = "file", accept = ".jpeg, .png, .pdf" })
+        </div>
+
+
+        <button type="submit">Submit</button>
+    }
+</main>
