@@ -30,7 +30,9 @@ namespace FileUploadTest.Repositories
         }
         public string SaveImage(HttpPostedFileBase logoFile)
         {
-            if (!AllowedFileExtensions.Contains(logoFile.ContentType))
+            string fileExtension = Path.GetExtension(logoFile.FileName).ToLowerInvariant();
+
+            if (!AllowedFileExtensions.Contains(fileExtension))
             {
                 return null;
             }
